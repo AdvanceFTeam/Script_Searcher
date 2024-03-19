@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Script Searcher</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1 class="header-title">Script Searcher</h1>
+    <button class="button dark-mode-button" id="dark-mode-toggle">Dark Mode</button>
+  </header>
+  <main class="container">
+    <section class="section search-section">
+      <form id="search-form">
+        <div class="form-group">
+          <label class="label" for="search-input">Search Scripts:</label>
+          <input class="input" type="text" id="search-input" placeholder="Search Script...">
+        </div>
+        <div class="form-group">
+          <label class="label" for="mode-select">Script Mode:</label>
+          <select class="select" id="mode-select">
+            <option value="free">Free</option>
+            <option value="paid">Paid</option>
+          </select>
+        </div>
+        <button class="button search-button" type="submit">Search</button>
+      </form>
+    </section>
+    <section class="section results-section">
+      <div class="results" id="results"></div>
+      <button class="button load-more-button" id="load-more">Load More</button>
+    </section>
+  </main>
+  <footer class="footer">
+    <p>&copy; 2023 YellowGreg All rights reserved. | You can use it but give credit.</p>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
