@@ -14,7 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const response = await fetch(`https://scriptblox.com/api/script/search?q=${searchInput}&script%20name=5&mode=${modeSelect}&page=${page}`);
       const data = await response.json();
 
-      resultsDiv.innerHTML = '';
+      if (page === 1) {
+        resultsDiv.innerHTML = '';
+      }
 
       if (data?.result?.scripts) {
         data.result.scripts.forEach(script => {
@@ -41,33 +43,33 @@ document.addEventListener('DOMContentLoaded', function() {
     scriptDiv.classList.add('script-card');
 
     const imageSrc = script.game.imageUrl ? `https://scriptblox.com${script.game.imageUrl}` : './404.jpg';
-    const keyLink = script.key ? `<a href="${script.keyLink}">Get Key</a>` : 'No';
+    const keyLink = script.key ? `<a href="${script.keyLink}" target="_blank" rel="noopener noreferrer">Get Key</a>` : 'No';
 
     scriptDiv.innerHTML = `
-        <h3><a href="https://scriptblox.com/script/${script.slug}">${script.title}</a></h3>
-        <img src="${imageSrc}" alt="Game Image" onerror="this.src='./404.jpg';" />
-        <div class="script-content-container">
-            <p>Game: ${script.game.name}</p>
-            <p>Script Type: ${script.scriptType}</p>
-            <p>Views: ${script.views}</p>
-            <p>Created At: ${new Date(script.createdAt).toLocaleString()}</p>
-            <p>Updated At: ${new Date(script.updatedAt).toLocaleString()}</p>
-            <p>Verified: ${script.verified ? 'Yes' : 'No'}</p>
-            <p>Key Required: ${keyLink}</p>
-            <div class="script-text-container">
-                <p>Script: <span id="script-content">${script.script}</span></p>
-                <button class="copy-button">Copy</button>
-            </div>
+      <h3 class="script-title"><a href="https://scriptblox.com/script/${script.slug}" target="_blank" rel="noopener noreferrer">${script.title}</a></h3>
+      <img src="${imageSrc}" alt="Game Image" onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFV_3fgSgibO5UnL_ydawji9oIAUr6NblpEw&s';" />
+      <div class="script-content-container">
+        <div class="script-details">
+          <p>Game: ${script.game.name}</p>
+          <p>Script Type: ${script.scriptType}</p>
+          <p>Views: ${script.views}</p>
+          <p>Created At: ${new Date(script.createdAt).toLocaleString()}</p>
+          <p>Updated At: ${new Date(script.updatedAt).toLocaleString()}</p>
+          <p>Verified: ${script.verified ? 'Yes' : 'No'}</p>
+          <p>Key Required: ${keyLink}</p>
         </div>
+        <div class="script-text-container">
+          <p>Script: <span id="script-content">${script.script}</span></p>
+          <button class="copy-button">Copy</button>
+        </div>
+      </div>
     `;
 
-    // you can see what it does 
     const copyButton = scriptDiv.querySelector('.copy-button');
     copyButton.addEventListener('click', handleCopyButtonClick.bind(null, scriptDiv));
 
     return scriptDiv;
   }
-
 
   function handleCopyButtonClick(scriptDiv) {
     const scriptContent = scriptDiv.querySelector('#script-content');
@@ -84,8 +86,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   searchForm.addEventListener('submit', async function(e) {
     e.preventDefault();
-    resultsDiv.innerHTML = '';
-    loadMoreButton.style.display = 'none';
     await fetchScripts(1);
   });
 
@@ -93,13 +93,9 @@ document.addEventListener('DOMContentLoaded', function() {
     await fetchScripts(currentPage + 1);
   });
 
-  // Dark mode toggle function
   function toggleDarkMode() {
     const isDarkMode = document.body.classList.toggle('dark-mode');
-    document.querySelectorAll('.container, .header, .search-section, .form-group, .results-section, .footer').forEach(element => {
-      element.classList.toggle('dark-mode', isDarkMode);
-    });
-    darkModeButton.classList.toggle('moon-icon', isDarkMode);
+    document.body.classList.toggle('light-mode', !isDarkMode);
     localStorage.setItem('darkMode', isDarkMode ? 'true' : 'false');
   }
 
@@ -109,6 +105,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const isDarkMode = localStorage.getItem('darkMode') === 'true';
   if (isDarkMode) {
-    toggleDarkMode();
+    document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.add('light-mode');
   }
 });
