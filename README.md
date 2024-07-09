@@ -4,3 +4,7 @@ A reupload of yellowgreg script searcher website
 
 ## Update
 - Made it support mobile screen now
+
+
+# IMPORTANT
+- Scriptblox had a major update, so the script searcher website is now broken, but I will try to fix it later, in the future.
