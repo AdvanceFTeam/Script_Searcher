@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modeSelect = document.getElementById('mode-select').value;
 
     try {
-      const response = await fetch(`https://script-fetcher-proxy.vercel.app/api/search?q=${encodeURIComponent(searchInput)}&mode=${encodeURIComponent(modeSelect)}&page=${page}`);
+      const response = await fetch(`https://scriptblox-api-proxy.vercel.app/api/search?q=${encodeURIComponent(searchInput)}&mode=${encodeURIComponent(modeSelect)}&page=${page}`);
       const data = await response.json();
 
       if (page === 1) {
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const keyLink = script.key ? `<a href="${script.keyLink}" target="_blank" rel="noopener noreferrer">Get Key</a>` : 'No';
 
     scriptDiv.innerHTML = `
-      <h3 class="script-title"><a href="https://script-fetcher-proxy.vercel.app/script/${script.slug}" target="_blank" rel="noopener noreferrer">${script.title}</a></h3>
+      <h3 class="script-title"><a href="https://scriptblox-api-proxy.vercel.app/script/${script.slug}" target="_blank" rel="noopener noreferrer">${script.title}</a></h3>
       <img src="${imageSrc}" alt="Game Image" onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFV_3fgSgibO5UnL_ydawji9oIAUr6NblpEw&s';" />
       <div class="script-content-container">
         <div class="script-details">
