@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
   const searchForm = document.getElementById('search-form');
   const resultsDiv = document.getElementById('results');
   const loadMoreButton = document.getElementById('load-more');
@@ -6,26 +6,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
   let currentPage = 1;
 
-  async function fetchScripts(page) {
+  async function fetchScripts(page = 1) {
     const searchInput = document.getElementById('search-input').value;
     const modeSelect = document.getElementById('mode-select').value;
 
     try {
-      const response = await fetch(`https://scriptblox.com/api/script/search?q=${searchInput}&script%20name=5&mode=${modeSelect}&page=${page}`);
+      const response = await fetch(`https://script-fetcher-proxy.vercel.app/api/search?q=${encodeURIComponent(searchInput)}&mode=${encodeURIComponent(modeSelect)}&page=${page}`);
       const data = await response.json();
 
       if (page === 1) {
         resultsDiv.innerHTML = '';
       }
 
-      if (data?.result?.scripts) {
+      if (data?.result?.scripts?.length) {
         data.result.scripts.forEach(script => {
           const scriptDiv = createScriptCard(script);
           resultsDiv.appendChild(scriptDiv);
         });
 
         currentPage = page;
-
         loadMoreButton.style.display = currentPage < data.result.totalPages ? 'block' : 'none';
       } else {
         resultsDiv.innerHTML = '<p>No scripts found.</p>';
@@ -46,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const keyLink = script.key ? `<a href="${script.keyLink}" target="_blank" rel="noopener noreferrer">Get Key</a>` : 'No';
 
     scriptDiv.innerHTML = `
-      <h3 class="script-title"><a href="https://scriptblox.com/script/${script.slug}" target="_blank" rel="noopener noreferrer">${script.title}</a></h3>
+      <h3 class="script-title"><a href="https://script-fetcher-proxy.vercel.app/script/${script.slug}" target="_blank" rel="noopener noreferrer">${script.title}</a></h3>
       <img src="${imageSrc}" alt="Game Image" onerror="this.src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFV_3fgSgibO5UnL_ydawji9oIAUr6NblpEw&s';" />
       <div class="script-content-container">
         <div class="script-details">
@@ -59,21 +58,21 @@ document.addEventListener('DOMContentLoaded', function() {
           <p>Key Required: ${keyLink}</p>
         </div>
         <div class="script-text-container">
-          <p>Script: <span id="script-content">${script.script}</span></p>
+          <p>Script: <span class="script-content">${script.script}</span></p>
           <button class="copy-button">Copy</button>
         </div>
       </div>
     `;
 
     const copyButton = scriptDiv.querySelector('.copy-button');
-    copyButton.addEventListener('click', handleCopyButtonClick.bind(null, scriptDiv));
+    copyButton.addEventListener('click', () => handleCopyButtonClick(scriptDiv));
 
     return scriptDiv;
   }
 
   function handleCopyButtonClick(scriptDiv) {
-    const scriptContent = scriptDiv.querySelector('#script-content');
-    navigator.clipboard.writeText(scriptContent.textContent)
+    const scriptContent = scriptDiv.querySelector('.script-content').textContent;
+    navigator.clipboard.writeText(scriptContent)
       .then(() => {
         const copyButton = scriptDiv.querySelector('.copy-button');
         copyButton.textContent = 'Copied!';
@@ -84,13 +83,13 @@ document.addEventListener('DOMContentLoaded', function() {
       .catch(err => console.error('Copy failed:', err));
   }
 
-  searchForm.addEventListener('submit', async function(e) {
+  searchForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    await fetchScripts(1);
+    fetchScripts(1);
   });
 
-  loadMoreButton.addEventListener('click', async function() {
-    await fetchScripts(currentPage + 1);
+  loadMoreButton.addEventListener('click', () => {
+    fetchScripts(currentPage + 1);
   });
 
   function toggleDarkMode() {
@@ -109,4 +108,5 @@ document.addEventListener('DOMContentLoaded', function() {
   } else {
     document.body.classList.add('light-mode');
   }
+  fetchScripts(1);
 });
