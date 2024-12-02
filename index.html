@@ -1,41 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Script Searcher</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header class="header">
-    <h1 class="header-title">Script Searcher</h1>
-    <button class="button dark-mode-button" id="dark-mode-toggle">Dark Mode</button>
-  </header>
-  <main class="container">
-    <section class="section search-section">
-      <form id="search-form" class="search-form">
-        <div class="form-group">
-          <label class="label" for="search-input">Search Scripts:</label>
-          <input class="input" type="text" id="search-input" placeholder="Search Script...">
-        </div>
-        <div class="form-group">
-          <label class="label" for="mode-select">Script Mode:</label>
-          <select class="select" id="mode-select">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Script Searcher</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Script Searcher</h1>
+        <div class="search-bar">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search scripts..."
+          />
+          <select id="filter-select">
+            <option value="">All</option>
             <option value="free">Free</option>
             <option value="paid">Paid</option>
           </select>
+          <button id="search-button">Search</button>
         </div>
-        <button class="button search-button" type="submit">Search</button>
-      </form>
-    </section>
-    <section class="section results-section">
-      <div class="results" id="results"></div>
-      <button class="button load-more-button" id="load-more">Load More</button>
-    </section>
-  </main>
-  <footer class="footer">
-    <p>&copy; 2023 YellowGreg All rights reserved. | You can use it but give credit.</p>
-  </footer>
-  <script src="script.js"></script>
-</body>
+      </header>
+      <main>
+        <div id="error-message"></div>
+        <div id="scripts-grid" class="grid"></div>
+        <div class="pagination">
+          <button id="prev-button">Previous</button>
+          <button id="next-button">Next</button>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <div class="credit">
+          <span
+            >Made by
+            <a href="https://github.com/AdvanceFTeam" target="_blank"
+              >AdvanceFalling Team</a
+            ></span
+          >
+          <span>| Powered by Scriptblox API</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <p>&copy; 2024 AdvanceFalling Team</p>
+      </footer>
+    </div>
+    <div id="script-details-modal" class="modal">
+      <div class="modal-content">
+        <span id="close-modal" class="close">&times;</span>
+        <h2 id="modal-title"></h2>
+        <p id="modal-details"></p>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
 </html>
