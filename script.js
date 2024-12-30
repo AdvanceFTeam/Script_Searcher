@@ -56,13 +56,21 @@ async function searchScripts(query, mode, page = 1) {
 function displayScripts(scripts) {
     scriptsGrid.innerHTML = "";
     scripts.forEach((script) => {
-        const imageSrc = script.game?.imageUrl
-            ? `https://scriptblox.com${script.game.imageUrl}`
-            : "https://c4.wallpaperflare.com/wallpaper/673/92/53/404-not-found-anime-girls-glowing-eyes-wallpaper-thumb.jpg";
+        let imageSrc;
+
+        if (script.game?.imageUrl.startsWith("http")) {
+            imageSrc = script.game.imageUrl;
+        } else {
+            imageSrc = `https://scriptblox.com${script.game?.imageUrl || ""}`;
+        }
+
+        const fallbackImage = "https://c4.wallpaperflare.com/wallpaper/673/92/53/404-not-found-anime-girls-glowing-eyes-wallpaper-thumb.jpg";
+
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-            <img src="${imageSrc}" alt="${script.title}" loading="lazy" onerror="this.src='https://c4.wallpaperflare.com/wallpaper/673/92/53/404-not-found-anime-girls-glowing-eyes-wallpaper-thumb.jpg';">
+            <img src="${imageSrc}" alt="${script.title}" loading="lazy"
+                onerror="this.src='${fallbackImage}';">
             <div class="card-content">
                 <h2 class="card-title">${script.title}</h2>
                 <p class="card-game">Game: ${script.game?.name || "Universal"}</p>
@@ -136,9 +144,9 @@ function displayDetails(script) {
     modal.style.display = "flex";
 }
 
-function CClick(slug) {
-    window.open(`https://scriptblox-api-proxy.vercel.app/script/${slug}`, "_blank");
-}
+// function CClick(slug) {
+//     window.open(`https://scriptblox-api-proxy.vercel.app/script/${slug}`, "_blank");
+// }
 
 function displayError(message) { 
     scriptsGrid.innerHTML = "";
@@ -149,18 +157,20 @@ search.addEventListener("click", () => {
     Querys = searchInput.value.trim();
     Modes = filter.value;
     currentPage = 1;
-    isModes = true;
-    searchScripts(Querys, Modes, currentPage);
+    isModes = !!Querys;
+    // searchScripts(Querys, Modes, currentPage);
+    isModes ? searchScripts(Querys, Modes, currentPage) : fetchScripts(currentPage);
 });
 
-search.addEventListener("click", () => {
-    const query = searchInput.value.trim();
-    if (!query) {
-        fetchScripts();
-    } else {
-        searchScripts(query, Modes, currentPage); // 1 (uh..)
-    }
-});
+// search.addEventListener("click", () => {
+//     const query = searchInput.value.trim();
+//     if (!query) {
+//         fetchScripts();
+//     } else {
+//         searchScripts(query, Modes, currentPage); // 1 (uh..)
+//     }
+// });
+
 
 // let debounceTimeout;
 
@@ -176,18 +186,26 @@ search.addEventListener("click", () => {
 //     }, 300); 
 // });
 
-
 prev.addEventListener("click", () => {
     if (currentPage > 1) {
         currentPage--;
-        isModes ? searchScripts(Querys, Modes, currentPage) : fetchScripts(currentPage);
+        if (isModes && Querys) {
+            searchScripts(Querys, Modes, currentPage);
+        } else {
+            fetchScripts(currentPage);
+        }
     }
 });
 
 next.addEventListener("click", () => {
     currentPage++;
-    isModes ? searchScripts(Querys, Modes, currentPage) : fetchScripts(currentPage);
+    if (isModes && Querys) {
+        searchScripts(Querys, Modes, currentPage);
+    } else {
+        fetchScripts(currentPage);
+    }
 });
+
 
 closeModal.addEventListener("click", () => {
     modal.style.display = "none";
