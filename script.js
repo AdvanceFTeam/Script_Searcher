@@ -157,9 +157,9 @@ search.addEventListener("click", () => {
 search.addEventListener("click", () => {
     const query = searchInput.value.trim();
     if (!query) {
-        fetchHomePageScripts();
+        fetchScripts();
     } else {
-        fetchSearchResults(query);
+        searchScripts(query, Modes, currentPage); // 1 (uh..)
     }
 });
 
