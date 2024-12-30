@@ -24,7 +24,12 @@ async function fetchScripts(page = 1) {
         return;
     } try {
         const response = await fetch(`${proxAPI}?page=${page}`);
-        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+        if (!response.ok) {
+            if (response.status === 429) {
+                throw new Error("Too many requests. Please wait a moment and try again.");
+            }
+            throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+        }
         const data = await response.json();
         if (!data.result || !data.result.scripts.length) throw new Error("No scripts found.");
 
@@ -43,7 +48,12 @@ async function searchScripts(query, mode, page = 1) {
         if (mode) url.searchParams.append("mode", mode);
         url.searchParams.append("page", page);
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+        if (!response.ok) {
+            if (response.status === 429) {
+                throw new Error("Too many requests. Please wait a moment and try again.");
+            }
+            throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+        }
         const data = await response.json();
         if (!data.result || !data.result.scripts.length) throw new Error("No search results found.");
         displayScripts(data.result.scripts);
