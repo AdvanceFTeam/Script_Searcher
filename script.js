@@ -72,35 +72,6 @@ function displayScripts(scripts) {
         scriptsGrid.appendChild(card);
     });
 }
-
-/* 
-This will show all the thumbnail of the the homepage scripts, but will break the search result since this makes it load all the thumbnail image making the api have to many requests so will fix later don't uncomment this :p
-
-
-function displayScripts(scripts) {
-    scriptsGrid.innerHTML = "";
-    scripts.forEach((script) => {
-        const imageSrc = script.game?.imageUrl
-            ? (script.game.imageUrl.startsWith("http") 
-                ? script.game.imageUrl 
-                : `https://scriptblox.com${script.game.imageUrl}`)
-            : "https://c4.wallpaperflare.com/wallpaper/673/92/53/404-not-found-anime-girls-glowing-eyes-wallpaper-thumb.jpg";
-
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-            <img src="${imageSrc}" alt="${script.title}" loading="lazy" 
-                onerror="this.src='https://c4.wallpaperflare.com/wallpaper/673/92/53/404-not-found-anime-girls-glowing-eyes-wallpaper-thumb.jpg';">
-            <div class="card-content">
-                <h2 class="card-title">${script.title}</h2>
-                <p class="card-game">Game: ${script.game?.name || "Universal"}</p>
-            </div>
-        `;
-        card.addEventListener("click", () => displayDetails(script));
-        scriptsGrid.appendChild(card);
-    });
-}
-*/
 function displayDetails(script) {
     const gameName = script.game?.name || "Universal";
     const gameImage = script.game?.imageUrl
