@@ -11,6 +11,7 @@ const modal = document.getElementById("script-details-modal");
 const modalTitle = document.getElementById("modal-title");
 const modalDetails = document.getElementById("modal-details");
 const closeModal = document.getElementById("close-modal");
+const S_Cache = new Map();
 
 let currentPage = 1;
 let isModes = false;
@@ -18,11 +19,16 @@ let Querys = "";
 let Modes = "";
 
 async function fetchScripts(page = 1) {
-    try {
+    if (S_Cache.has(page)) {
+        displayScripts(S_Cache.get(page));
+        return;
+    } try {
         const response = await fetch(`${proxAPI}?page=${page}`);
         if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
         const data = await response.json();
         if (!data.result || !data.result.scripts.length) throw new Error("No scripts found.");
+
+        S_Cache.set(page, data.result.scripts); // Cache result
         displayScripts(data.result.scripts);
         error_msg.textContent = "";
     } catch (error) {
@@ -56,7 +62,7 @@ function displayScripts(scripts) {
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-            <img src="${imageSrc}" alt="${script.title}" onerror="this.src='https://c4.wallpaperflare.com/wallpaper/673/92/53/404-not-found-anime-girls-glowing-eyes-wallpaper-thumb.jpg';">
+            <img src="${imageSrc}" alt="${script.title}" loading="lazy" onerror="this.src='https://c4.wallpaperflare.com/wallpaper/673/92/53/404-not-found-anime-girls-glowing-eyes-wallpaper-thumb.jpg';">
             <div class="card-content">
                 <h2 class="card-title">${script.title}</h2>
                 <p class="card-game">Game: ${script.game?.name || "Universal"}</p>
@@ -156,6 +162,20 @@ search.addEventListener("click", () => {
         fetchSearchResults(query);
     }
 });
+
+// let debounceTimeout;
+
+// searchInput.addEventListener("input", () => {
+//     clearTimeout(debounceTimeout);
+//     debounceTimeout = setTimeout(() => {
+//         const query = searchInput.value.trim();
+//         if (query) {
+//             searchScripts(query, filter.value, 1);
+//         } else {
+//             fetchScripts();
+//         }
+//     }, 300); 
+// });
 
 
 prev.addEventListener("click", () => {
