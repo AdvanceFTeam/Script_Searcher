@@ -100,7 +100,6 @@ function displayDetails(script) {
         : "No Key Required";
 
     if (!script.script) {
-        // Redirects to the original post if no script is found 
         window.location.href = `https://scriptblox.com/script/${script.slug}`;
         return;
     }
