@@ -74,7 +74,7 @@ function displayScripts(scripts) {
             imageSrc = `https://scriptblox.com${script.game?.imageUrl || ""}`;
         }
 
-        const fallbackImage = "https://c4.wallpaperflare.com/wallpaper/673/92/53/404-not-found-anime-girls-glowing-eyes-wallpaper-thumb.jpg";
+        const fallbackImage = "https://files.catbox.moe/gamwb1.jpg";
 
         const card = document.createElement("div");
         card.className = "card";
@@ -94,7 +94,7 @@ function displayDetails(script) {
     const gameName = script.game?.name || "Universal";
     const gameImage = script.game?.imageUrl
         ? `https://scriptblox.com${script.game.imageUrl}`
-        : "https://c4.wallpaperflare.com/wallpaper/673/92/53/404-not-found-anime-girls-glowing-eyes-wallpaper-thumb.jpg";
+        : "https://files.catbox.moe/gamwb1.jpg";
     const keyLink = script.key
         ? `<a href="${script.keyLink}" target="_blank" rel="noopener noreferrer" class="key-link">Get Key</a>`
         : "No Key Required";
@@ -109,7 +109,7 @@ function displayDetails(script) {
         <div class="minimal-details-card">
             <div class="details-header">
                 <div class="header-image">
-                    <img src="${gameImage}" alt="${gameName}" onerror="this.src='https://c4.wallpaperflare.com/wallpaper/673/92/53/404-not-found-anime-girls-glowing-eyes-wallpaper-thumb.jpg';">
+                    <img src="${gameImage}" alt="${gameName}" onerror="this.src='https://files.catbox.moe/gamwb1.jpg';">
                 </div>
                 <div class="header-info">
                     <h3>${script.title}</h3>
