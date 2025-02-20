@@ -22,7 +22,8 @@ async function fetchScripts(page = 1) {
     if (S_Cache.has(page)) {
         displayScripts(S_Cache.get(page));
         return;
-    } try {
+    }
+    try {
         const response = await fetch(`${proxAPI}?page=${page}`);
         if (!response.ok) {
             if (response.status === 429) {
@@ -65,10 +66,15 @@ async function searchScripts(query, mode, page = 1) {
 
 function displayScripts(scripts) {
     scriptsGrid.innerHTML = "";
+    const maxTitleLength = 60;
     scripts.forEach((script) => {
-        let imageSrc;
+        let displayTitle = script.title;
+        if (displayTitle.length > maxTitleLength) {
+            displayTitle = displayTitle.substring(0, maxTitleLength) + "...";
+        }
 
-        if (script.game?.imageUrl.startsWith("http")) {
+        let imageSrc;
+        if (script.game?.imageUrl && script.game.imageUrl.startsWith("http")) {
             imageSrc = script.game.imageUrl;
         } else {
             imageSrc = `https://scriptblox.com${script.game?.imageUrl || ""}`;
@@ -79,10 +85,10 @@ function displayScripts(scripts) {
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-            <img src="${imageSrc}" alt="${script.title}" loading="lazy"
+            <img src="${imageSrc}" alt="${displayTitle}" loading="lazy"
                 onerror="this.src='${fallbackImage}';">
             <div class="card-content">
-                <h2 class="card-title">${script.title}</h2>
+                <h2 class="card-title">${displayTitle}</h2>
                 <p class="card-game">Game: ${script.game?.name || "Universal"}</p>
             </div>
         `;
@@ -90,21 +96,26 @@ function displayScripts(scripts) {
         scriptsGrid.appendChild(card);
     });
 }
+
 function displayDetails(script) {
     const gameName = script.game?.name || "Universal";
     const gameImage = script.game?.imageUrl
-        ? `https://scriptblox.com${script.game.imageUrl}`
+        ? script.game.imageUrl.startsWith("http")
+            ? script.game.imageUrl
+            : `https://scriptblox.com${script.game.imageUrl}`
         : "https://files.catbox.moe/gamwb1.jpg";
-    const keyLink = script.key
-        ? `<a href="${script.keyLink}" target="_blank" rel="noopener noreferrer" class="key-link">Get Key</a>`
-        : "No Key Required";
 
     if (!script.script) {
         window.location.href = `https://scriptblox.com/script/${script.slug}`;
         return;
     }
-
-    modalTitle.textContent = "Details";
+    
+    const maxModalTitleLength = 20;
+    const modalDisplayTitle = script.title.length > maxModalTitleLength
+        ? script.title.substring(0, maxModalTitleLength) + "..."
+        : script.title;
+    
+    modalTitle.textContent = "Script Details";
     modalDetails.innerHTML = `
         <div class="minimal-details-card">
             <div class="details-header">
@@ -112,32 +123,62 @@ function displayDetails(script) {
                     <img src="${gameImage}" alt="${gameName}" onerror="this.src='https://files.catbox.moe/gamwb1.jpg';">
                 </div>
                 <div class="header-info">
-                    <h3>${script.title}</h3>
-                    <p class="tag">${script.scriptType.charAt(0).toUpperCase() + script.scriptType.slice(1)}</p>
-                    <p class="tag ${script.verified ? 'verified' : 'not-verified'}">
-                        ${script.verified ? "Verified" : "Not Verified"}
-                    </p>
+                    <h3>${modalDisplayTitle}</h3>
+                    <div class="details-tags">
+                        <span class="tag ${script.verified ? 'verified' : 'not-verified'}">
+                            <i class="fas fa-${script.verified ? 'check-circle' : 'times-circle'}"></i>
+                            ${script.verified ? "Verified" : "Not Verified"}
+                        </span>
+                        <span class="tag ${script.isPatched ? 'patched' : 'active'}">
+                            <i class="fas fa-${script.isPatched ? 'ban' : 'check'}"></i>
+                            ${script.isPatched ? "Patched" : "Active"}
+                        </span>
+                        <span class="tag ${script.scriptType === 'paid' ? 'paid' : ''}">
+                            <i class="fas fa-${script.scriptType === 'paid' ? 'dollar-sign' : 'code'}"></i>
+                            ${script.scriptType.charAt(0).toUpperCase() + script.scriptType.slice(1)}
+                        </span>
+                        ${script.key ? `
+                            <span class="tag key">
+                                <i class="fas fa-key"></i>
+                                Requires Key
+                            </span>
+                        ` : ''}
+                    </div>
                 </div>
             </div>
-            <div class="details-tags">
-                <span class="tag">${gameName}</span>
-                <span class="tag">${script.visibility}</span>
-                <span class="tag ${script.isPatched ? 'patched' : 'active'}">
-                    ${script.isPatched ? "Patched" : "Active"}
-                </span>
-            </div>
+            
             <div class="details-section">
-                <h4>Details</h4>
-                <p><i class="fas fa-eye"></i> Views: ${script.views}</p>
-                <p><i class="fas fa-calendar-alt"></i> Created At: ${new Date(script.createdAt).toLocaleString()}</p>
-                <p><i class="fas fa-calendar-check"></i> Updated At: ${new Date(script.updatedAt).toLocaleString()}</p>
-                <p><i class="fas fa-key"></i> Requires Key: ${keyLink}</p>
+                <h4><i class="fas fa-info-circle"></i> Details</h4>
+                <div class="details-info">
+                    <div class="info-item">
+                        <i class="fas fa-eye"></i>
+                        <span>${script.views.toLocaleString()} Views</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Created: ${new Date(script.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Updated: ${new Date(script.updatedAt).toLocaleDateString()}</span>
+                    </div>
+                    ${script.key ? `
+                        <div class="info-item">
+                            <i class="fas fa-key"></i>
+                            <a href="${script.keyLink}" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: underline;">Get Key</a>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
+
             <div class="script-box">
-                <h4>Script</h4>
+                <h4><i class="fas fa-code"></i> Script</h4>
                 <div class="code-container">
                     <pre>${script.script || "No script available."}</pre>
-                    <button class="copy-button">Copy Script</button>
+                    <button class="copy-button">
+                        <i class="fas fa-copy"></i>
+                        Copy Script
+                    </button>
                 </div>
             </div>
         </div>
@@ -146,16 +187,15 @@ function displayDetails(script) {
     const copyButton = modalDetails.querySelector(".copy-button");
     copyButton.addEventListener("click", () => {
         navigator.clipboard.writeText(script.script || "No script available.").then(() => {
-            alert("Script copied to clipboard!");
+            copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy Script';
+            }, 2000);
         });
     });
 
     modal.style.display = "flex";
 }
-
-// function CClick(slug) {
-//     window.open(`https://scriptblox-api-proxy.vercel.app/script/${slug}`, "_blank");
-// }
 
 function displayError(message) { 
     scriptsGrid.innerHTML = "";
@@ -167,33 +207,8 @@ search.addEventListener("click", () => {
     Modes = filter.value;
     currentPage = 1;
     isModes = !!Querys;
-    // searchScripts(Querys, Modes, currentPage);
     isModes ? searchScripts(Querys, Modes, currentPage) : fetchScripts(currentPage);
 });
-
-// search.addEventListener("click", () => {
-//     const query = searchInput.value.trim();
-//     if (!query) {
-//         fetchScripts();
-//     } else {
-//         searchScripts(query, Modes, currentPage); // 1 (uh..)
-//     }
-// });
-
-
-// let debounceTimeout;
-
-// searchInput.addEventListener("input", () => {
-//     clearTimeout(debounceTimeout);
-//     debounceTimeout = setTimeout(() => {
-//         const query = searchInput.value.trim();
-//         if (query) {
-//             searchScripts(query, filter.value, 1);
-//         } else {
-//             fetchScripts();
-//         }
-//     }, 300); 
-// });
 
 prev.addEventListener("click", () => {
     if (currentPage > 1) {
@@ -215,9 +230,22 @@ next.addEventListener("click", () => {
     }
 });
 
-
 closeModal.addEventListener("click", () => {
     modal.style.display = "none";
+});
+
+searchInput.addEventListener("focus", () => {
+    searchInput.parentElement.style.transform = "scale(1.02)";
+});
+
+searchInput.addEventListener("blur", () => {
+    searchInput.parentElement.style.transform = "scale(1)";
+});
+
+searchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        search.click();
+    }
 });
 
 fetchScripts();

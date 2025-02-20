@@ -5,17 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Script Searcher</title>
     <link rel="stylesheet" href="style.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   </head>
   <body>
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    
     <div class="container">
       <header>
         <h1>Script Searcher</h1>
-        <div class="search-bar">
-          <input
-            type="text"
-            id="search-input"
-            placeholder="Search scripts..."
-          />
+        <div class="search-bar glass">
+          <div class="search-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search scripts..."
+            />
+          </div>
           <select id="filter-select">
             <option value="">All</option>
             <option value="free">Free</option>
@@ -24,36 +32,31 @@
           <button id="search-button">Search</button>
         </div>
       </header>
+      
       <main>
         <div id="error-message"></div>
         <div id="scripts-grid" class="grid"></div>
-        <div class="pagination">
-          <button id="prev-button">Previous</button>
-          <button id="next-button">Next</button>
+        <div class="pagination" style="padding: 10px; border-radius: 5px;">
+          <button id="prev-button" style="height: 50px; width: 150px;"><i class="fas fa-chevron-left"></i> Previous</button>
+          <button id="next-button" style="height: 50px; width: 150px;">Next <i class="fas fa-chevron-right"></i></button>
         </div>
       </main>
 
-      <footer class="footer">
+      <footer class="footer glass">
         <div class="credit">
-          <span
-            >Made by
-            <a href="https://github.com/AdvanceFTeam" target="_blank"
-              >AdvanceFalling Team</a
-            ></span
-          >
+          <span>Made by <a href="https://github.com/AdvanceFTeam" target="_blank">AdvanceFalling Team</a></span>
           <span>| Powered by Scriptblox API</span>
         </div>
-
         <div class="divider"></div>
-
         <p>&copy; 2024 AdvanceFalling Team</p>
       </footer>
     </div>
+
     <div id="script-details-modal" class="modal">
-      <div class="modal-content">
-        <span id="close-modal" class="close">&times;</span>
+      <div class="modal-content glass">
+        <span id="close-modal" class="close"><i class="fas fa-times"></i></span>
         <h2 id="modal-title"></h2>
-        <p id="modal-details"></p>
+        <div id="modal-details"></div>
       </div>
     </div>
     <script src="script.js"></script>
